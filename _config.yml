@@ -10,7 +10,7 @@ title: Unbounded
 email: penfever@gmail.com
 description: Musings on Machine Learning
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://yourdomain.com" # the base hostname & protocol for your site
+url: "https://penfever.github.io" # the base hostname & protocol for your site
 twitter_username: FeuerBenjamin
 github_username:  penfever
 paginate: 5
