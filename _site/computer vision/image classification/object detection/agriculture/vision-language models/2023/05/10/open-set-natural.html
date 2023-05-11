@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Weak language supervision in agriculture: opportunities and challenges</title>
+  <meta name="description" content="Image classification and object detection in agriculture">
+  <link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic|Source+Sans+Pro:400,700,200,300|Josefin+Sans:400,600,700,300' rel='stylesheet' type='text/css'>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="canonical" href="http://yourdomain.com/computer%20vision/image%20classification/object%20detection/agriculture/vision-language%20models/2023/05/10/open-set-natural.html">
+  <link rel="alternate" type="application/rss+xml" title="Unbounded" href="http://yourdomain.com/feed.xml">
+</head>
+
+
+  <body class=" light  ">
+
+    
+<div class="wrapper">
+  <center> <a href="/index.html"><div class="site-title">   Unbounded </div></a></center>
+</div>
+<div class="wrapper site-description">
+<center>  Musings on Machine Learning </center>
+</div>
+<div class="wrapper">
+  <div class="trigger site-navigation">
+    <a class="page-link" href="http://yourdomain.com">HOME</a>
+
+    
+    
+
+    <span class="exclamationMark">/</span><a class="page-link" href="/about/">About</a>
+    
+    
+    
+    
+    
+    
+    
+
+    <span class="exclamationMark">/</span><a class="page-link" href="/projects/">Projects</a>
+    
+    
+    
+    
+  </div>
+</div>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline"><a class="post-title-link"  href="/computer%20vision/image%20classification/object%20detection/agriculture/vision-language%20models/2023/05/10/open-set-natural.html">Weak language supervision in agriculture: opportunities and challenges</a></h1>
+  <center>  <p class="post-meta"><time datetime="2023-05-10T14:15:31+00:00" itemprop="datePublished">May 10, 2023</time></p>
+    
+     <div class="">
+       <center><p ><strong><span class="authorKeyword">Author</span><span class="small-site-title"> <h2 style="letter-spacing: 3px !important;
+       text-transform: uppercase !important;">Benjamin Feuer</h2></span></strong></p></center>
+
+     </div>
+     
+   </center>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h1 id="image-classification-and-object-detection-in-agriculture">Image classification and object detection in agriculture</h1>
+
+<p>One important real-world domain for applying deep learning is agriculture. Over the last two years, under the auspices of <a href="https://aiira.iastate.edu/resources/news-and-announcements/">AIIRA</a>, a collaborative seven-university project sponsored by the NSF, I have had the good fortune to lead a large team of researchers from New York University, Iowa State University and the University of Arizona in developing novel tools and methods for object detection and insect classification tailored to the needs of real-world agricultural researchers and practicioners. Some of that work is described here.</p>
+
+<h2 id="prior-work-in-ag-ml">Prior work in ag-ML</h2>
+
+<p>Macro-organism classification (or species identification) is a computer vision problem with substantial relevance to field biologists as well as other agricultural domain experts. However, the research interests which drive the computer vision community do not always align perfectly with expert needs.</p>
+
+<p>Consider the <a href="https://paperswithcode.com/dataset/inaturalist">iNaturalist</a> or iNat dataset. This is a citizen scientist undertaking; images on a wide range of species are collected ad-hoc and assembled for the purposes of training species classification models.</p>
+
+<p>The iNat dataset is highly imbalanced (long-tailed) with dramatically different number of images per category. For example, the largest super-category “Plantae (Plant)” has 196,613 images from 2,101 categories; whereas the smallest super-category “Protozoa” only has 381 images from 4 categories. Furthermore, metadata is inconsistent; descriptive natural language captions for each image are not available.</p>
+
+<p>From an agricultural standpoint, not all species are created equal. Insects, which are underrepresented in conventional image classification tasks such as ImageNet, are of outsized importance for ecology and crop production, as harmful and beneficial insects are inherent in the system. Agronomists, scientists and plant breeders need to identify insect species for conservation and control practices. Improper identification of species could potentially result in biased economic or action threshold estimation, leading to unnecessary application of chemicals that could harm beneficial insects, reduce profitability, and have an adverse environmental footprint.</p>
+
+<p>While manual scouting (and counting) remains the gold standard for pest identification and action threshold determination, this is a resource and (expert) labor-intensive yet critical aspect of agriculture. Additionally, genomic studies and high-throughput phenotyping rely on accurate phenotypic data including from imaging data; therefore, advances in annotation and localization of “object of interest” is necessary and an active area of current genetics and phenomics studies.</p>
+
+<h2 id="prior-work-in-computer-vision">Prior work in computer vision</h2>
+
+<h3 id="open-vocabulary-image-classification">Open-Vocabulary Image Classification</h3>
+
+<p>OpenAI’s <a href="https://openai.com/research/clip">CLIP</a> was a breakthrough in open-set image classification, and has since been used for many downstream tasks, including image synthesis and object detection. By training both an image classification model and a natural language processing model in tandem, these architectures are able to learn image classification tasks without the use of manually applied ground truth labels, instead using natural language captions or tags. Thus, these architectures can be considered semi-supervised, meaning that there is considerably less work/cost involved in generating usable datasets for training, since there is little to no manual labeling of data involved. If you are unfamiliar with the architecture, we recommend reviewing it <a href="https://openai.com/research/clip">here</a>.</p>
+
+<p>Robustness research by our lab and others indicated that contrastive vision-language models are considerably more robust to label noise than classifiers trained with the conventional softmax + cross-entropy loss. Additional experimental studies have demonstrated that it was possible to use a pretrained, locked image tower with far fewer samples and achieve results close to, but not on par with, vision-language models trained on semi-supervised data; this process is referred to as <a href="https://arxiv.org/abs/2111.07991">LiT-Tuning</a>.</p>
+
+<h3 id="open-vocabulary-object-detection">Open-Vocabulary Object Detection</h3>
+
+<p>Detection models focus on two loosely correlated problems: localizing objects of interest in an image, and assigning labels to them. One popular approach is a two-stage process, wherein the models detect probable object region proposals, and further finetune the bounding boxes and predict classes.</p>
+
+<p><a href="https://github.com/facebookresearch/Detic">DETIC</a> presents an interesting zero-shot solution to this problem by training detection models simultaneously with object detection and image classification datasets. Formally, let $\gD_{det}={\rvx_i, {b_{i,j}, c_{i,j}}}$ consist of images with labelled boxes, and $\gD_{cls}={\rvx_i, c_i}$ be a classification dataset with image-level labels. Traditional detection networks consist of a two-stage detector; the first half of the network, $f_D:\R^d\to {\R^m \times \left[0,1\right]}$ outputs a set of bounding boxes and corresponding objectness scores. The second half, $f_c:\R^m \to \R^4 \times [c] $ takes in every proposal with an objectness score higher than a threshold and outputs a bounding box with the corresponding prediction. The networks are trained only on $D_{det}$.</p>
+
+<p>Detic improves upon this by training $f_c$ on both $\gD_{det}$ and $\gD_{cls}$. The classification head in $f_c$ is also replaced with CLIP embeddings as weights to add open-set classification capabilities. Every minibatch consists of mix of samples from $\gD_{det}$ and $\gD_{cls}$. The training examples from $\gD_{det}$ are trained using the standard detection loss (boxwise regression and classification losses). Examples from $\gD_{cls}$ 
+are assumed to have a single detected object (the largest detected box) with the image label as the box label. The model is then trained with the following loss:
+<script type="math/tex">\begin{align*}
+    L(I) = \begin{cases}
+         L_{RPN} + L_{Reg} + L_{cls}, ~~\text{if}~I\in \gD_{det} \\
+         \lambda L_{max-size}, ~~\text{if}~I\in\gD_{cls}
+    \end{cases}
+\end{align*}</script>
+Note that here, $L_{RPN}, L_{reg}$, and $L_{cls}$ refer to the training losses from <a href="https://arxiv.org/abs/1506.01497">Faster RCNN</a> while $L_{max-size}$ is a cross-entropy loss with the target as the image class.</p>
+
+<p>DETIC has two advantages over traditional detectors; (1) it can learn from image classification datasets which are generally larger than detection datasets, and contain a variety of classes, and, (2) the CLIP embeddings used as the classification head allow for a far larger number of classes. Thus, contrary to standard detection models, DETIC does not require fine-tuning, and can be used for zero-shot detection with natural images.</p>
+
+<h2 id="lit-tuned-models-for-efficient-species-detection">LiT-Tuned Models for Efficient Species Detection</h2>
+
+<p>In <a href="https://chinmayhegde.github.io/assets/papers/aaai23-lit.pdf">LiT-Tuned Models for Efficient Species Detection</a>, we focused on the problem of effectively adapting image-only datasets such as iNaturalist for use in training open-vocabulary detectors such as CLIP.</p>
+
+<p>The optimal method for automatically captioning a dataset for which no captions exist is an open problem. In the original CLIP paper, Radford et al use an ensemble of 80 captions with the classname (and sometimes the object supercategory) varying each time; for example, ”A photo of a clam, a type of seafood”. Experimental results indicate that while this method is suitable for inference, it is not optimal for pretraining, owing to the homogeneity of the caption space. Furthermore, our robustness experiments indicated that ”bag of words” VL models are largely agnostic to word order and sentence syntax.</p>
+
+<p>After some testing, we selected a simple method which can be deployed on any dataset for which class-level metadata exists:</p>
+
+<ul>
+  <li>Aggregate metadata for each class</li>
+  <li>Select a subset of metadata columns which maximize inter-class differences</li>
+  <li>Generate image captions as ‘A photo of a $\langle$ CONCAT_METADATA $\rangle$’</li>
+</ul>
+
+<p>The resulting dataset, <strong>iNat-Captions</strong>, is hosted on <a href="https://huggingface.co/ajn313/inat_captions/tree/main">HuggingFace</a> and is free for public use.</p>
+
+<h3 id="results">Results</h3>
+
+<p>We train a LiT-tuned vision language model using our lab’s <a href="https://github.com/penfever/vlhub/">VLHub</a> architecture, and find that despite <em>using a locked, pretrained image tower which has previously seen only ImageNet-1000 classes</em>, we are able to achieve a Top1 Accuracy of 63.28% on the 10,000-class iNat-2021 test set.</p>
+
+<p>This is a surprising result, overturning much of the conventional wisdom in computer vision, which maintains that image classifiers optimize largely on the visual feature space and its architecture, with the choice of classification head typically serving as an afterthought. Rich textual representations, it seems, even without an associated grammar, can be used to adapt a computer vision classifier to accurately handle visual classes <strong>on which it has never been trained</strong>; the class overlap between ImageNet-21k and iNaturalist-2021 is small.</p>
+
+<h2 id="zero-shot-insect-detection-via-weak-language-supervision">Zero-Shot Insect Detection via Weak Language Supervision</h2>
+
+<p>Encouraged by these findings, <a href="https://chinmayhegde.github.io/assets/papers/aaai23-zs.pdf">in a follow-up paper presented at the AAAI Workshop on AI for Agriculture and Food Sciences</a>, we proceed to tackle the more challenging task of open-vocabulary object detection on agricultural data.</p>
+
+<p>We curate the Insecta rank class of iNaturalist to form a new benchmark dataset, <strong>Insecta</strong>, of approximately 6M images consisting of 2526 agriculturally important species, and perform manual quality checking of a subset of these images to ensure their quality.</p>
+
+<p>We create a workflow tool, iNaturalist Open Download, to easily download species images from the iNaturalist Open Dataset associated with a specific taxonomy rank. We used the tool to download all images of species under the rank class Insecta from the iNaturalist Open Dataset for downstream annotation, curation and use in our model. We choose to only use images identified as “research” quality grade under the iNaturalist framework, which indicates that the labeling inspection for the image is more rigorous than standard and has multiple agreeing identifications at the species level. This results in a total of 13,271,072 images across 95,399 different insect species at the time of writing. The images have a maximum resolution of 1024x1024, in .jpg/.jpeg format and total 5.7 terabytes. Among the 95,399 insect species, we select 2526 species which have been reported to be the most agriculturally important species. This subset of insect classes contribute to 6 million images in total.</p>
+
+<p>We further demonstrate that using zero-shot object detectors such as DETIC, inference can be performed by simply specifying the category/class using a new natural language description. A single (universal) natural language prompt provides highly accurate bounding box for a very large dataset of diverse insect-pest images.</p>
+
+<p><img src="../assets/insecta_samples_01.png" alt="" /></p>
+
+<p><img src="../assets/insecta_samples_02.png" alt="" /></p>
+
+<h2 id="future-work">Future Work</h2>
+
+<p>Although significant progress has been made, there remain important tasks for which the best currently existing computer vision models are ill-suited, such as counting instances of pests at a distance and localizing particular instances using natural language commands.</p>
+
+<p>There also exist opportunities beyond the purview of computer vision; large language models hold considerable promise for zero-shot scientific annotation and species description, as well as visual question answering.</p>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+
+<p>I wish to gratefully acknowledge my many collaborators on this line of work, including Ameya Joshi, Minsu Cho, Kewal Jani, Shivani Chiranjeevi, Andre Nakkab, Zi Kang Deng, Aditya Balu, Asheesh K. Singh, Soumik Sarkar, Nirav Merchant, Arti Singh, Baskar Ganapathysubramanian and Chinmay Hegde.</p>
+
+  </div>
+
+  <footer class="postNavigation">
+  
+    <a class="postPrev" href="/nlp/large%20language%20models/big%20data/dataset%20search/2023/05/10/archetype.html">
+        &laquo; ArcheType: open-set column type annotation using large language models
+    </a>
+  
+  
+  </footer>
+
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading small-site-title">Unbounded</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list footer-content">
+          <li>Powered By <a href="http://github.com/hemangsk/Gravity">Gravity</a></li>
+          <li>Made with <i class="fa fa-heart"></i> on <a href="http://jekyllrb.com"><span>{ { Jekyll } }</a></span></li>
+
+
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2 footer-content">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/penfever"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">penfever</span></a>
+
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/FeuerBenjamin"><span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">FeuerBenjamin</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3 site-description">
+        <p>Musings on Machine Learning</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

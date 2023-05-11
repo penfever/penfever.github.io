@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Unbounded</title>
+    <description>Musings on Machine Learning</description>
+    <link>http://yourdomain.com/</link>
+    <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 11 May 2023 12:06:48 +0000</pubDate>
+    <lastBuildDate>Thu, 11 May 2023 12:06:48 +0000</lastBuildDate>
+    <generator>Jekyll v3.1.6</generator>
+    
+      <item>
+        <title>Weak language supervision in agriculture: opportunities and challenges</title>
+        <description>&lt;h1 id=&quot;image-classification-and-object-detection-in-agriculture&quot;&gt;Image classification and object detection in agriculture&lt;/h1&gt;
+
+&lt;p&gt;One important real-world domain for applying deep learning is agriculture. Over the last two years, under the auspices of &lt;a href=&quot;https://aiira.iastate.edu/resources/news-and-announcements/&quot;&gt;AIIRA&lt;/a&gt;, a collaborative seven-university project sponsored by the NSF, I have had the good fortune to lead a large team of researchers from New York University, Iowa State University and the University of Arizona in developing novel tools and methods for object detection and insect classification tailored to the needs of real-world agricultural researchers and practicioners. Some of that work is described here.&lt;/p&gt;
+
+&lt;h2 id=&quot;prior-work-in-ag-ml&quot;&gt;Prior work in ag-ML&lt;/h2&gt;
+
+&lt;p&gt;Macro-organism classification (or species identification) is a computer vision problem with substantial relevance to field biologists as well as other agricultural domain experts. However, the research interests which drive the computer vision community do not always align perfectly with expert needs.&lt;/p&gt;
+
+&lt;p&gt;Consider the &lt;a href=&quot;https://paperswithcode.com/dataset/inaturalist&quot;&gt;iNaturalist&lt;/a&gt; or iNat dataset. This is a citizen scientist undertaking; images on a wide range of species are collected ad-hoc and assembled for the purposes of training species classification models.&lt;/p&gt;
+
+&lt;p&gt;The iNat dataset is highly imbalanced (long-tailed) with dramatically different number of images per category. For example, the largest super-category “Plantae (Plant)” has 196,613 images from 2,101 categories; whereas the smallest super-category “Protozoa” only has 381 images from 4 categories. Furthermore, metadata is inconsistent; descriptive natural language captions for each image are not available.&lt;/p&gt;
+
+&lt;p&gt;From an agricultural standpoint, not all species are created equal. Insects, which are underrepresented in conventional image classification tasks such as ImageNet, are of outsized importance for ecology and crop production, as harmful and beneficial insects are inherent in the system. Agronomists, scientists and plant breeders need to identify insect species for conservation and control practices. Improper identification of species could potentially result in biased economic or action threshold estimation, leading to unnecessary application of chemicals that could harm beneficial insects, reduce profitability, and have an adverse environmental footprint.&lt;/p&gt;
+
+&lt;p&gt;While manual scouting (and counting) remains the gold standard for pest identification and action threshold determination, this is a resource and (expert) labor-intensive yet critical aspect of agriculture. Additionally, genomic studies and high-throughput phenotyping rely on accurate phenotypic data including from imaging data; therefore, advances in annotation and localization of “object of interest” is necessary and an active area of current genetics and phenomics studies.&lt;/p&gt;
+
+&lt;h2 id=&quot;prior-work-in-computer-vision&quot;&gt;Prior work in computer vision&lt;/h2&gt;
+
+&lt;h3 id=&quot;open-vocabulary-image-classification&quot;&gt;Open-Vocabulary Image Classification&lt;/h3&gt;
+
+&lt;p&gt;OpenAI’s &lt;a href=&quot;https://openai.com/research/clip&quot;&gt;CLIP&lt;/a&gt; was a breakthrough in open-set image classification, and has since been used for many downstream tasks, including image synthesis and object detection. By training both an image classification model and a natural language processing model in tandem, these architectures are able to learn image classification tasks without the use of manually applied ground truth labels, instead using natural language captions or tags. Thus, these architectures can be considered semi-supervised, meaning that there is considerably less work/cost involved in generating usable datasets for training, since there is little to no manual labeling of data involved. If you are unfamiliar with the architecture, we recommend reviewing it &lt;a href=&quot;https://openai.com/research/clip&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Robustness research by our lab and others indicated that contrastive vision-language models are considerably more robust to label noise than classifiers trained with the conventional softmax + cross-entropy loss. Additional experimental studies have demonstrated that it was possible to use a pretrained, locked image tower with far fewer samples and achieve results close to, but not on par with, vision-language models trained on semi-supervised data; this process is referred to as &lt;a href=&quot;https://arxiv.org/abs/2111.07991&quot;&gt;LiT-Tuning&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;open-vocabulary-object-detection&quot;&gt;Open-Vocabulary Object Detection&lt;/h3&gt;
+
+&lt;p&gt;Detection models focus on two loosely correlated problems: localizing objects of interest in an image, and assigning labels to them. One popular approach is a two-stage process, wherein the models detect probable object region proposals, and further finetune the bounding boxes and predict classes.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/facebookresearch/Detic&quot;&gt;DETIC&lt;/a&gt; presents an interesting zero-shot solution to this problem by training detection models simultaneously with object detection and image classification datasets. Formally, let $\gD_{det}={\rvx_i, {b_{i,j}, c_{i,j}}}$ consist of images with labelled boxes, and $\gD_{cls}={\rvx_i, c_i}$ be a classification dataset with image-level labels. Traditional detection networks consist of a two-stage detector; the first half of the network, $f_D:\R^d\to {\R^m \times \left[0,1\right]}$ outputs a set of bounding boxes and corresponding objectness scores. The second half, $f_c:\R^m \to \R^4 \times [c] $ takes in every proposal with an objectness score higher than a threshold and outputs a bounding box with the corresponding prediction. The networks are trained only on $D_{det}$.&lt;/p&gt;
+
+&lt;p&gt;Detic improves upon this by training $f_c$ on both $\gD_{det}$ and $\gD_{cls}$. The classification head in $f_c$ is also replaced with CLIP embeddings as weights to add open-set classification capabilities. Every minibatch consists of mix of samples from $\gD_{det}$ and $\gD_{cls}$. The training examples from $\gD_{det}$ are trained using the standard detection loss (boxwise regression and classification losses). Examples from $\gD_{cls}$ 
+are assumed to have a single detected object (the largest detected box) with the image label as the box label. The model is then trained with the following loss:
+&lt;script type=&quot;math/tex&quot;&gt;\begin{align*}
+    L(I) = \begin{cases}
+         L_{RPN} + L_{Reg} + L_{cls}, ~~\text{if}~I\in \gD_{det} \\
+         \lambda L_{max-size}, ~~\text{if}~I\in\gD_{cls}
+    \end{cases}
+\end{align*}&lt;/script&gt;
+Note that here, $L_{RPN}, L_{reg}$, and $L_{cls}$ refer to the training losses from &lt;a href=&quot;https://arxiv.org/abs/1506.01497&quot;&gt;Faster RCNN&lt;/a&gt; while $L_{max-size}$ is a cross-entropy loss with the target as the image class.&lt;/p&gt;
+
+&lt;p&gt;DETIC has two advantages over traditional detectors; (1) it can learn from image classification datasets which are generally larger than detection datasets, and contain a variety of classes, and, (2) the CLIP embeddings used as the classification head allow for a far larger number of classes. Thus, contrary to standard detection models, DETIC does not require fine-tuning, and can be used for zero-shot detection with natural images.&lt;/p&gt;
+
+&lt;h2 id=&quot;lit-tuned-models-for-efficient-species-detection&quot;&gt;LiT-Tuned Models for Efficient Species Detection&lt;/h2&gt;
+
+&lt;p&gt;In &lt;a href=&quot;https://chinmayhegde.github.io/assets/papers/aaai23-lit.pdf&quot;&gt;LiT-Tuned Models for Efficient Species Detection&lt;/a&gt;, we focused on the problem of effectively adapting image-only datasets such as iNaturalist for use in training open-vocabulary detectors such as CLIP.&lt;/p&gt;
+
+&lt;p&gt;The optimal method for automatically captioning a dataset for which no captions exist is an open problem. In the original CLIP paper, Radford et al use an ensemble of 80 captions with the classname (and sometimes the object supercategory) varying each time; for example, ”A photo of a clam, a type of seafood”. Experimental results indicate that while this method is suitable for inference, it is not optimal for pretraining, owing to the homogeneity of the caption space. Furthermore, our robustness experiments indicated that ”bag of words” VL models are largely agnostic to word order and sentence syntax.&lt;/p&gt;
+
+&lt;p&gt;After some testing, we selected a simple method which can be deployed on any dataset for which class-level metadata exists:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Aggregate metadata for each class&lt;/li&gt;
+  &lt;li&gt;Select a subset of metadata columns which maximize inter-class differences&lt;/li&gt;
+  &lt;li&gt;Generate image captions as ‘A photo of a $\langle$ CONCAT_METADATA $\rangle$’&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The resulting dataset, &lt;strong&gt;iNat-Captions&lt;/strong&gt;, is hosted on &lt;a href=&quot;https://huggingface.co/ajn313/inat_captions/tree/main&quot;&gt;HuggingFace&lt;/a&gt; and is free for public use.&lt;/p&gt;
+
+&lt;h3 id=&quot;results&quot;&gt;Results&lt;/h3&gt;
+
+&lt;p&gt;We train a LiT-tuned vision language model using our lab’s &lt;a href=&quot;https://github.com/penfever/vlhub/&quot;&gt;VLHub&lt;/a&gt; architecture, and find that despite &lt;em&gt;using a locked, pretrained image tower which has previously seen only ImageNet-1000 classes&lt;/em&gt;, we are able to achieve a Top1 Accuracy of 63.28% on the 10,000-class iNat-2021 test set.&lt;/p&gt;
+
+&lt;p&gt;This is a surprising result, overturning much of the conventional wisdom in computer vision, which maintains that image classifiers optimize largely on the visual feature space and its architecture, with the choice of classification head typically serving as an afterthought. Rich textual representations, it seems, even without an associated grammar, can be used to adapt a computer vision classifier to accurately handle visual classes &lt;strong&gt;on which it has never been trained&lt;/strong&gt;; the class overlap between ImageNet-21k and iNaturalist-2021 is small.&lt;/p&gt;
+
+&lt;h2 id=&quot;zero-shot-insect-detection-via-weak-language-supervision&quot;&gt;Zero-Shot Insect Detection via Weak Language Supervision&lt;/h2&gt;
+
+&lt;p&gt;Encouraged by these findings, &lt;a href=&quot;https://chinmayhegde.github.io/assets/papers/aaai23-zs.pdf&quot;&gt;in a follow-up paper presented at the AAAI Workshop on AI for Agriculture and Food Sciences&lt;/a&gt;, we proceed to tackle the more challenging task of open-vocabulary object detection on agricultural data.&lt;/p&gt;
+
+&lt;p&gt;We curate the Insecta rank class of iNaturalist to form a new benchmark dataset, &lt;strong&gt;Insecta&lt;/strong&gt;, of approximately 6M images consisting of 2526 agriculturally important species, and perform manual quality checking of a subset of these images to ensure their quality.&lt;/p&gt;
+
+&lt;p&gt;We create a workflow tool, iNaturalist Open Download, to easily download species images from the iNaturalist Open Dataset associated with a specific taxonomy rank. We used the tool to download all images of species under the rank class Insecta from the iNaturalist Open Dataset for downstream annotation, curation and use in our model. We choose to only use images identified as “research” quality grade under the iNaturalist framework, which indicates that the labeling inspection for the image is more rigorous than standard and has multiple agreeing identifications at the species level. This results in a total of 13,271,072 images across 95,399 different insect species at the time of writing. The images have a maximum resolution of 1024x1024, in .jpg/.jpeg format and total 5.7 terabytes. Among the 95,399 insect species, we select 2526 species which have been reported to be the most agriculturally important species. This subset of insect classes contribute to 6 million images in total.&lt;/p&gt;
+
+&lt;p&gt;We further demonstrate that using zero-shot object detectors such as DETIC, inference can be performed by simply specifying the category/class using a new natural language description. A single (universal) natural language prompt provides highly accurate bounding box for a very large dataset of diverse insect-pest images.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../assets/insecta_samples_01.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../assets/insecta_samples_02.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;future-work&quot;&gt;Future Work&lt;/h2&gt;
+
+&lt;p&gt;Although significant progress has been made, there remain important tasks for which the best currently existing computer vision models are ill-suited, such as counting instances of pests at a distance and localizing particular instances using natural language commands.&lt;/p&gt;
+
+&lt;p&gt;There also exist opportunities beyond the purview of computer vision; large language models hold considerable promise for zero-shot scientific annotation and species description, as well as visual question answering.&lt;/p&gt;
+
+&lt;h2 id=&quot;acknowledgements&quot;&gt;Acknowledgements&lt;/h2&gt;
+
+&lt;p&gt;I wish to gratefully acknowledge my many collaborators on this line of work, including Ameya Joshi, Minsu Cho, Kewal Jani, Shivani Chiranjeevi, Andre Nakkab, Zi Kang Deng, Aditya Balu, Asheesh K. Singh, Soumik Sarkar, Nirav Merchant, Arti Singh, Baskar Ganapathysubramanian and Chinmay Hegde.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 10 May 2023 14:15:31 +0000</pubDate>
+        <link>http://yourdomain.com/computer%20vision/image%20classification/object%20detection/agriculture/vision-language%20models/2023/05/10/open-set-natural.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/computer%20vision/image%20classification/object%20detection/agriculture/vision-language%20models/2023/05/10/open-set-natural.html</guid>
+        
+        
+        <category>Computer vision</category>
+        
+        <category>image classification</category>
+        
+        <category>object detection</category>
+        
+        <category>agriculture</category>
+        
+        <category>vision-language models</category>
+        
+      </item>
+    
+      <item>
+        <title>ArcheType: open-set column type annotation using large language models</title>
+        <description>&lt;h1 id=&quot;archetype&quot;&gt;ArcheType&lt;/h1&gt;
+
+&lt;p&gt;This post describes &lt;a href=&quot;https://github.com/penfever/archetype/&quot;&gt;ArcheType&lt;/a&gt;, a new way of doing column type annotation using large language models under the hood, which I developed under the supervision of Prof. Freire and Prof. Hegde at New York University.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-column-type-annotation&quot;&gt;What is column type annotation?&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Column type annotation&lt;/strong&gt; (CTA) is an important open problem in big data literature.&lt;/p&gt;
+
+&lt;p&gt;One way to conceptualize the problem is as inferring column names where none exist, typically by examining the values contained in the column and learning to apply appropriate labels to them.&lt;/p&gt;
+
+&lt;p&gt;Another would be to assume that column names exist, but do not map to some unifying schema. In this case, the algorithmic task is to remap column names which are out-of-schema to their in-schema counterparts, assuming such counterparts exist.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../assets/auctus.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In this example from NYU’s &lt;a href=&quot;https://auctus.vida-nyu.org/&quot;&gt;Auctus&lt;/a&gt; platform, the column named tpep_pickup_datetime has been automatically tagged with Text, Enumeration and DateTime column types.&lt;/p&gt;
+
+&lt;h3 id=&quot;why-should-i-care&quot;&gt;Why should I care?&lt;/h3&gt;
+
+&lt;p&gt;CTA is a precursor to important downstream tasks in data discovery, including establishing unionability and joinability relationships between datasets, data integration, and data cleaning. It also democratizes access to data by reducing labeling costs.&lt;/p&gt;
+
+&lt;p&gt;In less technical terms, a good CTA model can make searches over datasets more relevant and informative.&lt;/p&gt;
+
+&lt;h3 id=&quot;formal-analysis&quot;&gt;Formal Analysis&lt;/h3&gt;
+
+&lt;p&gt;We formalize CTA as follows –&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Posit the existence of column(s) $C_i : \mathbb{N} \rightarrow \Sigma_&lt;em&gt;$ in a table $T$ of column cardinality $t$, where $i$ is an index over a non-strict subset of $t$. Each column $C \in T$ is a function which maps row indices to strings, $\Sigma_C \sim \Sigma_&lt;/em&gt;$, constrained by $\forall i, 0 &amp;lt;&lt;/td&gt;
+      &lt;td&gt;\Sigma_{C_i}&lt;/td&gt;
+      &lt;td&gt;= c$. Here, $\Sigma_*$ is the set of all possible strings. $C_i$ may include a column name, and $T$ may contain an additional metadata field; however, neither of these properties is guaranteed to exist, and so we do not include them in our analysis. The model is also given a label set $L$ of strings with cardinality $j$.&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;We can model $CTA : T \rightarrow L$ as a relation from tables to labels, such that $\forall C_i, \exists L_j$ and $CTA(C_i) = L_j$.&lt;/p&gt;
+
+&lt;h3 id=&quot;challenges-in-cta&quot;&gt;Challenges in CTA&lt;/h3&gt;
+
+&lt;p&gt;It sounds simple enough. So, why is CTA challenging in the real world?&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;In many cases, we cannot assume the existence of a single, &lt;em&gt;correct&lt;/em&gt; column type&lt;/li&gt;
+  &lt;li&gt;Identifying basic types is rarely sufficient for dataset understanding and discovery&lt;/li&gt;
+  &lt;li&gt;Fine-tuned models require lots of labeled data in order to work&lt;/li&gt;
+  &lt;li&gt;The amount of context required to solve the problem is ambiguous&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;existing-cta-methods-and-their-limitations&quot;&gt;Existing CTA Methods and their Limitations&lt;/h3&gt;
+
+&lt;p&gt;Classical approaches to the CTA problem have been largely rule-based; for instance, if $k$ is an index over $c$, and we have $\forall k, \Sigma_{C_{i_k}}$ contains the suffix “kg”, we might define a rule $CTA(C_i) = \texttt{weight}$, else $CTA(C_i) = \texttt{integer}$. Such pattern matching approaches can be effective when data is clean and label sets are discrete, but when dealing with real-world data, this is rarely the case.&lt;/p&gt;
+
+&lt;p&gt;Consider, for the above example, that if we have to choose between three labels, $\texttt{weight}$, $\texttt{mass}$, $\texttt{integer}$, the above rule is no longer valid. This example is not academic; all three labels exist in the real-world &lt;a href=&quot;http://webdatacommons.org/structureddata/sotab/#toc8&quot;&gt;SOTAB&lt;/a&gt; benchmark, for instance.&lt;/p&gt;
+
+&lt;p&gt;Deep learning methods such as &lt;a href=&quot;https://github.com/megagonlabs/doduo&quot;&gt;DoDuo&lt;/a&gt; are a substantial improvement over traditional approaches; rather than relying on a list of rules, &lt;a href=&quot;https://github.com/megagonlabs/doduo&quot;&gt;DoDuo&lt;/a&gt; learns them as a function of its pretraining data. By pretraining on hundreds of thousands of tables and fine-tuning on a target label set, it is able to achieve impressive results on benchmarks.&lt;/p&gt;
+
+&lt;p&gt;Why, then, do we need to introduce a new method? Existing deep learning solutions for CTA have at least three major shortcomings;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;They degrade under &lt;em&gt;distribution shift&lt;/em&gt; (in other words, they don’t generalize well if the data they see when deployed differs much from the data they were trained on). You can see this in the image below; the DoDuo model goes from ~85% accuracy in-distribution to around 24% accuracy under shift … on a massively simplified version of the label set.&lt;/li&gt;
+  &lt;li&gt;Label sets are fixed at training time and cannot be changed; this problem is exacerbated by problem #1, since you often have to stretch the definition of a particular model label in order to make it work with your desired labels.&lt;/li&gt;
+  &lt;li&gt;Existing methods perform best when they have access to the entire table and metadata at inference time; this is often impractical, or even impossible.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;../assets/main_results_archetype.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;what-is-archetype&quot;&gt;What is ArcheType?&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;ArcheType&lt;/strong&gt; is a family of algorithms for column type annotation using large language models such as &lt;a href=&quot;chat.openai.com/&quot;&gt;ChatGPT&lt;/a&gt; and &lt;a href=&quot;https://ai.facebook.com/blog/large-language-model-llama-meta-ai/&quot;&gt;LLAMA&lt;/a&gt;. Here are some reasons we think it’s an improvement on existing methods –&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;It doesn’t need access to the whole table &amp;amp; metadata at inference time&lt;/strong&gt;. On the SOTAB benchmark, we find that ArcheType can match DoDuo using just fifteen samples from the table, some summary statistics describing the column, and the table’s filename. (See the table earlier in the post for those results)&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;It works with any label set you want … without retraining&lt;/strong&gt;.  Unlike prior methods, you can use ArcheType “zero-shot” – just tell it the labels you want to apply and give it a table, and it will automatically generate a sample and produce in-schema names for each of your table’s columns.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;You don’t need to use paid APIs&lt;/strong&gt;. We tested ArcheType on free models; you can download them via Huggingface and host them on a single NVIDIA GPU. It’s ‘ready-to-deploy’ in commercial settings.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;next-steps&quot;&gt;Next Steps&lt;/h3&gt;
+
+&lt;p&gt;We believe that LLMs have enormous potential in big data environments. We’re currently looking into applying it to a range of other tasks, including AutoML, dataset synthesis, property annotation (tagging), generating automatic descriptions of datasets, and conversational database queries. Stay tuned!&lt;/p&gt;
+</description>
+        <pubDate>Wed, 10 May 2023 14:15:31 +0000</pubDate>
+        <link>http://yourdomain.com/nlp/large%20language%20models/big%20data/dataset%20search/2023/05/10/archetype.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/nlp/large%20language%20models/big%20data/dataset%20search/2023/05/10/archetype.html</guid>
+        
+        
+        <category>NLP</category>
+        
+        <category>large language models</category>
+        
+        <category>big data</category>
+        
+        <category>dataset search</category>
+        
+      </item>
+    
+  </channel>
+</rss>
