@@ -33,18 +33,17 @@ Robustness research by our lab and others indicated that contrastive vision-lang
 
 Detection models focus on two loosely correlated problems: localizing objects of interest in an image, and assigning labels to them. One popular approach is a two-stage process, wherein the models detect probable object region proposals, and further finetune the bounding boxes and predict classes.
 
-[DETIC](https://github.com/facebookresearch/Detic) presents an interesting zero-shot solution to this problem by training detection models simultaneously with object detection and image classification datasets. Formally, let $D_{det}=\{\rvx_i, \{b_{i,j}, c_{i,j}\}\}$ consist of images with labelled boxes, and $D_{cls}=\{\rvx_i, c_i\}$ be a classification dataset with image-level labels. Traditional detection networks consist of a two-stage detector; the first half of the network, $f_D:\R^d\to \{\R^m \times \left[0,1\right]\}$ outputs a set of bounding boxes and corresponding objectness scores. The second half, $f_c:\R^m \to \R^4 \times [c] $ takes in every proposal with an objectness score higher than a threshold and outputs a bounding box with the corresponding prediction. The networks are trained only on $D_{det}$.
+[DETIC](https://github.com/facebookresearch/Detic) presents an interesting zero-shot solution to this problem by training detection models simultaneously with object detection and image classification datasets. Formally, let $D_{det}=\{\rvx_i, \{b_{i,j}, c_{i,j}\}\}$ consist of images with labelled boxes, and $D_{cls}=\{\rvx_i, c_i\}$ be a classification dataset with image-level labels. Traditional detection networks consist of a two-stage detector; the first half of the network, $f_D:R^d\to \{R^m \times \left[0,1\right]\}$ outputs a set of bounding boxes and corresponding objectness scores. The second half, $f_c:R^m \to R^4 \times [c] $ takes in every proposal with an objectness score higher than a threshold and outputs a bounding box with the corresponding prediction. The networks are trained only on $D_{det}$.
 
 Detic improves upon this by training $f_c$ on both $D_{det}$ and $D_{cls}$. The classification head in $f_c$ is also replaced with CLIP embeddings as weights to add open-set classification capabilities. Every minibatch consists of mix of samples from $D_{det}$ and $D_{cls}$. The training examples from $D_{det}$ are trained using the standard detection loss (boxwise regression and classification losses). Examples from $D_{cls}$ are assumed to have a single detected object (the largest detected box) with the image label as the box label. The model is then trained with the following loss:
 
 $$
-\begin{align*}
-    L(I) = \begin{cases}
-         L_{RPN} + L_{Reg} + L_{cls}, ~\text{if}~I\in D_{det} \\
-         \lambda L_{max-size}, ~\text{if}~I \in D_{cls}
-    \end{cases}
-\end{align*}
+L(I) = \begin{cases}
+     L_{RPN} + L_{Reg} + L_{cls}, ~\text{if}~I\in D_{det} \\
+     \lambda L_{max-size}, ~\text{if}~I \in D_{cls}
+\end{cases}
 $$
+
 Note that here, $L_{RPN}, L_{reg}$, and $L_{cls}$ refer to the training losses from [Faster RCNN](https://arxiv.org/abs/1506.01497) while $L_{max-size}$ is a cross-entropy loss with the target as the image class. 
 
 DETIC has two advantages over traditional detectors; (1) it can learn from image classification datasets which are generally larger than detection datasets, and contain a variety of classes, and, (2) the CLIP embeddings used as the classification head allow for a far larger number of classes. Thus, contrary to standard detection models, DETIC does not require fine-tuning, and can be used for zero-shot detection with natural images.
