@@ -31,7 +31,7 @@ In less technical terms, a good CTA model can make searches over datasets more r
 
 We formalize CTA as follows --
 
-Posit the existence of column(s) $C_i : \mathbb{N} \rightarrow \Sigma_\*$ in a table $T$ of column cardinality $t$, where $i$ is an index over a non-strict subset of $t$. Each column $C \in T$ is a function which maps row indices to strings, $\Sigma_C \sim \Sigma_*$, constrained by $\forall i, 0 < |\Sigma_{C_i}| = c$. Here, $\Sigma_*$ is the set of all possible strings. $C_i$ may include a column name, and $T$ may contain an additional metadata field; however, neither of these properties is guaranteed to exist, and so we do not include them in our analysis. The model is also given a label set $L$ of strings with cardinality $j$.
+Posit the existence of column(s) $C_i : \mathbb{N} \rightarrow \Sigma_\*$ in a table $T$ of column cardinality $t$, where $i$ is an index over a non-strict subset of $t$. Each column $C \in T$ is a function which maps row indices to strings, $\Sigma_C \sim \Sigma_\*$, constrained by $\forall i, 0 < |\Sigma_{C_i}| = c$. Here, $\Sigma_\*$ is the set of all possible strings. $C_i$ may include a column name, and $T$ may contain an additional metadata field; however, neither of these properties is guaranteed to exist, and so we do not include them in our analysis. The model is also given a label set $L$ of strings with cardinality $j$.
 
 We can model $CTA : T \rightarrow L$ as a relation from tables to labels, such that $\forall C_i, \exists L_j$ and $CTA(C_i) = L_j$.
 
