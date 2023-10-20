@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Weak language supervision in agriculture: opportunities and challenges"
-date:   2023-05-10 19:45:31 +0530
+date:   2023-05-17 19:45:31 +0530
 categories: ["Computer vision", "image classification", "object detection", "agriculture", "vision-language models"]
 author: "Benjamin Feuer"
 ---
