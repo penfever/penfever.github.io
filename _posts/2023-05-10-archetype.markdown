@@ -9,6 +9,8 @@ author: "Benjamin Feuer"
 
 This post describes [ArcheType](https://github.com/penfever/archetype/), a new way of doing column type annotation using large language models under the hood, which I developed under the supervision of Prof. Freire and Prof. Hegde at New York University.
 
+You can read the full paper on [arXiv](https://arxiv.org/abs/2310.18208), but here's a summary of our main findings.
+
 ## What is column type annotation?
 
 **Column type annotation** (CTA) is an important open problem in big data literature. 
