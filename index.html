@@ -1,60 +1,190 @@
----
-layout: default
----
+<!DOCTYPE html>
 
-<div class="home">
+<html>
 
+<head>
+  <title>Benjamin Feuer</title>
 
-  {% for post in paginator.posts%}
-  <div class="post postContent">
-    <div  class="postDate"><time datetime="{{ post.date | date_to_xmlschema }}" itemprop="datePublished">{{ post.date | date: "%b %-d, %Y" }}</time>
-    </div>
-    <div class="postTag">
-      {{post.tag}}
-    </div>
-    <br>
-    <div class="postTitle">
-    <a class='postLink' href="{{site.url}}{{site.baseurl}}{{post.url}}">{{post.title}}</a>
-    </div>
-    <div class="postExt">
-   {{ post.content | strip_html | truncate:200}}
-    </div>
-  </div>
+  <meta name="description" content="Benjamin Feuer is an AI and Machine Learning Ph.D. researcher at New York University.">
+  <meta name="keywords" content="Benjamin Feuer, Ben Feuer, penfever, machine learning, NYU, Columbia, Wesleyan University, New York University, computer science, CS, AI, artificial intelligence, data-centric ML, data engineering, large language models, LLMs, distributional robustness, VLMs, vision language models, object detection, zero-shot, in-context learning, tabular ML, tabular deep learning, semantic segmentation">
+  <meta name="author" content="Benjamin Feuer">
+  <meta charset="UTF-8">
 
-  {% endfor %}
-  {% if paginator.total_pages > 1 %}
-    <nav class="pagination">
-      {% if paginator.previous_page %}
-        <a class="paginationLink" href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo; Prev</a>
-      {% endif %}
+  <link href="./css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="./css/screen_stanford.css" rel="stylesheet" type="text/css">
+  <link href="./css/syntax.css" rel="stylesheet" type="text/css">
+  <link rel="shortcut icon" href="./img/w.png">
+  <link rel="stylesheet" href="./css/academicicons/css/academicons.min.css"/>
+  <link href="./css/fontawesome/css/all.css" rel="stylesheet">
 
-    {% for page in (1..paginator.total_pages) %}
-      {% if page == paginator.page %}
-        <em class="paginationLink paginationLinkCurrent">{{ page }}</em>
-      {% elsif page == 1 %}
-        <a class="paginationLink" href="/">{{ page }}</a>
-      {% else %}
-        <a class="paginationLink" href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}">{{ page }}</a>
-      {% endif %}
-    {% endfor %}
-
-    {% if paginator.next_page %}
-      <a class="paginationLink" href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Next &raquo;</a>
-    {% endif %}
-    </nav>
-  {% endif %}
-  <!--<ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta-main">{{ post.date | date: "%b %-d, %Y" }}</span>
-
-        <h2>
-          <a class="post-link-main" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
-    {% endfor %}
-  </ul>-->
+  <!-- Google Analytics Script -->
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-28340066-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+</head>
 
 
+<body>
+    <div class="container">
 
-</div>
+    <header>
+        <div class="header-left">
+            <img src="./assets/ben_upd.jpeg" alt="Benjamin Feuer" height="150" style="border-radius: 5px;">
+        </div>
+        <div class="header-right">
+            <!-- ========== -->
+            <!-- Name -->
+            <!-- ========== -->
+            <h1><a href="./index.html">Benjamin Feuer</a></h1>
+
+            <!-- ========== -->
+            <!-- Icons -->
+            <!-- ========== -->
+            <p class="pre_icon_padding"></p>
+            <p class="one_icon">
+              <a href="http://github.com/penfever" target="_blank">
+                <i class="fab fa-github"></i>
+            </p>
+            <p class="one_icon">
+              <a href="http://twitter.com/feuerbenjamin" target="_blank">
+                <i class="fab fa-twitter"></i>
+            </p>
+            <p class="one_icon">
+              <a href="https://scholar.google.com/citations?user=VPXu100AAAAJ&hl=en" target="_blank">
+                <i class="ai ai-google-scholar"></i></a>
+            </p>
+            <p class="one_icon_bigger">
+              <a href="./assets/ben-feuer-cv-030724.pdf" target="_blank">
+                <i class="ai ai-cv"></i></a>
+            </p>
+
+            <!-- ========== -->
+            <!-- Header/Tagline -->
+            <!-- ========== -->
+            <p class="header-tagline">
+                Machine learning at 
+                <a href="https://nyu.edu/"> NYU </a>
+            </p>
+
+            <!-- ========== -->
+            <!-- Current position blurb -->
+            <!-- ========== -->
+            <p class="bio">
+            <strong>Hi! I'm currently a PhD student in Machine Learning at New York University, advised by Prof. Chinmay Hegde.</strong>.
+            </p>
+        </div>
+    </header>
+
+    <section id="about">
+        <div class="section-right offset">
+
+            <!-- ========== -->
+            <!-- Research/Education Bio Paragraphs -->
+            <!-- ========== -->
+
+            <p class="bio">
+            <strong>Research: </strong>
+            My research focus is data-centric; I try to discover and empirically validate the key factors underpinning good dataset design, and I create methods to improve the performance of machine learning algorithms on data-centric tasks.
+            </p>
+
+            <p class="bio">
+            <strong>Education: </strong>
+            I am currently working towards my PhD in Computer Science
+            at New York University, advised by
+            <b><a href="https://chinmayhegde.github.io/">Chinmay Hegde.</a></b>
+            Previously, I studied at Columbia University and Wesleyan University. My frequent collaborators include 
+            <b><a href="https://goldblum.github.io/">Micah Goldblum</a></b>
+            and <b><a href="https://crwhite.ml/">Colin White</a></b>
+            and <b><a href="https://engineering.nyu.edu/faculty/juliana-freire">Juliana Freire</a></b>.
+            </p>
+
+        </div>
+    </section>
+
+    <section id="news">
+        <div class="section-title">
+            <h2>News</h2>
+        </div>
+        <div class="section-body" style="overflow-y:auto;height:450px;">
+            <ul>
+                <li class="news">
+                    <span class="news-name">
+                        <b>2024/2/13</b>
+                    </span>
+                    <span class="news-desc">
+                      <b><a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/f06d5ebd4ff40b40dd97e30cee632123-Abstract-Datasets_and_Benchmarks.html">New paper</a></b> (+
+                      <a href="https://github.com/naszilla/tabzilla">code</a>) benchmarking the performance of tabular algorithms on the largest suite of datasets to date. 
+                      <b><i>NeurIPS 2023 (Datasets and Benchmarks)</i></b>.
+                    </span>
+                </li>
+                <li class="news">
+                    <span class="news-name">
+                        <b>2023/11/07</b>
+                    </span>
+                    <span class="news-desc">
+                      <b><a href="https://arxiv.org/abs/2311.04016">New paper</a></b> studying the effects of two important dataset-level constituents: label set design, and class balance. 
+                      <b><i>NeurIPS 2023 (1st Workshop on Attributing Model Behavior at Scale) </i></b>.
+                    </span>
+                </li>
+                <li class="news">
+                    <span class="news-name">
+                        <b>2023/10/28</b>
+                    </span>
+                    <span class="news-desc">
+                      <b><a href="https://openreview.net/forum?id=b0OhN0ii36">New paper</a></b> investigating sketching and feature-selection methods for prior-fitted networks. 
+                      <b><i>NeurIPS 2023 (Second Table Representation Learning Workshop) </i></b>.
+                    </span>
+                </li>
+                <li class="news">
+                    <span class="news-name">
+                        <b>2023/10/27</b>
+                    </span>
+                    <span class="news-desc">
+                      <b><a href="https://arxiv.org/abs/2310.18208">New paper</a></b> (+
+                      <a href="https://github.com/penfever/archetype">code</a>) introducing ArcheType, a simple, practical method for context sampling, prompt serialization, model querying, and label remapping, which enables large language models to solve CTA problems in a fully zero-shot manner. 
+                      <b><i>VLDB 2024</i></b>.
+                    </span>
+                </li>                
+                <li class="news">
+                    <span class="news-name">
+                        <b>2023/08/01</b>
+                    </span>
+                    <span class="news-desc">
+                      <b><a href="https://arxiv.org/pdf/2308.03821">New paper</a></b> introducing JANuS (Joint Annotations and Names Set), a collection of four new training datasets with images, labels, and corresponding captions, and conducting controlled investigations of factors contributing to robustness in image classification.
+                      <b><i>TMLR 2023</i></b>.
+                    </span>
+                </li> 
+        </div>
+        <!--Note: I only have the following in order to add a correctly formatted "section-spacer" line...-->
+        <div class="section-right offset">
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h2>Publications</h2>
+        </div>
+        <div class="section-right offset">
+            A full list of my publications can be <a href="https://scholar.google.com/citations?user=VPXu100AAAAJ&hl=en">found here</a>.
+        </div>
+    </section>
+
+
+    <footer>
+        <p>
+            Check me on <a href="https://github.com/penfever">GitHub</a> &amp;
+            <a href="https://twitter.com/feuerbenjamin">Twitter</a>.  Check my current 
+            <a href="./assets/ben-feuer-cv-030724.pdf">CV.</a>  Site layout inspired by <a href="https://willieneis.github.io/">Willie Neiswanger</a>.
+        </p>
+    </footer>
+
+
+</body>
+</html>
