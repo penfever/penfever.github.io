@@ -1,0 +1,29 @@
+/* Basic syntax highlighting styles */
+.highlight {
+    background: #f8f8f8;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #e1e1e8;
+    overflow-x: auto;
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f4f4f4;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+pre {
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 4px solid #3498db;
+    overflow-x: auto;
+}
+
+pre code {
+    background-color: transparent;
+    padding: 0;
+}
